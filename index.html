@@ -37,8 +37,8 @@
         </div>
         <div id="pedidos" style="text-align: center; max-height: 300px; overflow-y: auto;"></div>
         <div id="buttons" style="text-align: center; width: 100%;">
-            <button class="btn" onclick="start = true; $('#coletar').hide(); $('#pl').show();" id="coletar">Coletar pedidos</button>
-            <button class="btn" onclick="play_pl()" id="pl" style="display: none;">Tocar playlist coletada</button>
+            <button class="btn" onclick="start = true; $('#coletar').hide(); $('p').text('esperando pedidos...')" id="coletar">Coletar pedidos</button>
+            <!-- <button class="btn" onclick="play_pl()" id="pl" style="display: none;">Tocar playlist coletada</button> -->
         </div>
     </div>
 
@@ -90,22 +90,25 @@
 
         var pedidos = []
         var pedido = 0
+        var first = true
         
         client.on('message', (channel, tags, message, self) => {
             if(message.startsWith('!sr') && start == true){
                 console.log(message.replace('!sr ', ''))
-                $('#pedidos').append(`o pedido de <span style="color: ${tags.color}; font-style: italic">${tags['display-name']}</span> foi registrado<br>`)
                 pedidos.push({'name': tags['display-name'], 'color': tags.color, 'message': youtube_parser(message.replace('!sr ', ''))})
+                if(first == true){
+                    first = false
+                    player.loadVideoById(pedidos[0].message)
+                    play_pl()
+                }
             }
             console.log(`${tags['display-name']}: ${message}`)
             
         });
 
         function play_pl(){
-            start = false
             $('p').text('F5 para criar uma nova playlist')
             
-            player.loadVideoById(pedidos[0].message)
             $('#pl').hide()
             $('#info').show()
             $('#info h4').html(`Pedido por: <span style="color: ${pedidos[0].color};">${pedidos[0].name}</span>`)
