@@ -27,18 +27,21 @@
     <div class="container">
         <h1 style="text-align: center;">Song request</h1>
         <p style="text-align: center;">Clique em "Coletar pedidos" para criar a playlist</p>
+        <h4 style="text-align: center;"></h4>
         <div id="player" style="margin: 0 auto; text-align: center; display: none;"></div>
         <div id="info" style="display: none;">
-            <h4 style="text-align: center;"></h4>
             <div id="buttons" style="text-align: center; width: 100%;">
-                <button class="btn" onclick="anterior()">Música anterior</button>
+                <button class="btn" onclick="anterior()">Música Anterior</button>
                 <button class="btn" onclick="proxima()">Pular Música</button>
             </div>
         </div>
         <div id="pedidos" style="text-align: center; max-height: 300px; overflow-y: auto;"></div>
         <div id="buttons" style="text-align: center; width: 100%;">
             <button class="btn" onclick="start = true; $('#coletar').hide(); $('p').text('esperando pedidos...')" id="coletar">Coletar pedidos</button>
-            <!-- <button class="btn" onclick="play_pl()" id="pl" style="display: none;">Tocar playlist coletada</button> -->
+        </div>
+
+        <div id="next" style="text-align: center; display: none;">
+            <h5></h5>
         </div>
     </div>
 
@@ -58,12 +61,14 @@
         firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
         let player;
 
-        window.onPlayerReady = (event) => {
-            event.target.playVideo();
-        };
-
         window.onPlayerStateChange = (event) => {
             if (event.data === 0) {
+                proxima()                
+            }
+        };
+
+        window.onError = (event) => {
+            if (event.data === 2) {
                 proxima()                
             }
         };
@@ -74,8 +79,8 @@
                 height: 480,
                 videoId: "",
                 events: {
-                    onReady: window.onPlayerReady,
-                    onStateChange: window.onPlayerStateChange
+                    onStateChange: window.onPlayerStateChange,
+                    onError: window.onError
                 }
             });
         };
@@ -85,6 +90,8 @@
                 return url.split('=')[1]
             }else if(url.startsWith('https://youtu.be/')){
                 return url.split('/')[3]
+            }else{
+                return false
             }
         }
 
@@ -94,7 +101,6 @@
         
         client.on('message', (channel, tags, message, self) => {
             if(message.startsWith('!sr') && start == true){
-                console.log(message.replace('!sr ', ''))
                 pedidos.push({'name': tags['display-name'], 'color': tags.color, 'message': youtube_parser(message.replace('!sr ', ''))})
                 if(first == true){
                     first = false
@@ -102,7 +108,12 @@
                     play_pl()
                 }
             }
-            console.log(`${tags['display-name']}: ${message}`)
+            if(message.startsWith('!skip') && tags.badges != null){
+                if('broadcaster' in tags['badges'] || 'moderator' in tags['badges']){
+                    console.log('skipado')
+                    proxima()
+                }
+            }
             
         });
 
@@ -111,7 +122,7 @@
             
             $('#pl').hide()
             $('#info').show()
-            $('#info h4').html(`Pedido por: <span style="color: ${pedidos[0].color};">${pedidos[0].name}</span>`)
+            $('h4').html(`Pedido por: <span style="color: ${pedidos[0].color};">${pedidos[0].name}</span>`)
             $('#player').show()
             $('#info').show()
             $('#pedidos').hide()
@@ -124,6 +135,7 @@
             }else{
                 pedido++
                 player.loadVideoById(pedidos[pedido].message)
+                $('h4').html(`Pedido por: <span style="color: ${pedidos[pedido].color};">${pedidos[pedido].name}</span>`)
             }
         }
 
@@ -133,8 +145,23 @@
             }else{
                 pedido--
                 player.loadVideoById(pedidos[pedido].message)
+                $('h4').html(`Pedido por: <span style="color: ${pedidos[pedido].color};">${pedidos[pedido].name}</span>`)
             }
         }
+
+        setInterval(function(){
+            if(player.getDuration() / 60 > 5){
+                proxima()
+            }
+            if(pedidos.length > 1 && pedido + 1 < pedidos.length){
+                $('#next').show()
+                $.getJSON('https://www.youtube.com/oembed?url=http://www.youtube.com/watch?v=' + pedidos[pedido + 1].message + '&format=json', function(data){
+                    $('h5').html('Próxima música: <i>' + data.title + '</i> pedido por <b style="color: ' + pedidos[pedido + 1].color + '">' + pedidos[pedido + 1].name + '</b>')
+                });
+            }else{
+                $('#next').hide()
+            }
+        }, 1000);
 
     </script>
 </body>
