@@ -21,11 +21,34 @@
 
         client.connect(); 
     </script>
+
+    <style>
+        .header{
+            text-align: center;
+        }
+        #comandos, .header{
+            width: 500px;
+            margin: auto;
+        }
+        #comandos{
+            outline: black solid 1px;
+            padding: 2px;
+        }
+    </style>
  
 </head>
 <body class="dark-mode">
     <div class="container">
         <h1 style="text-align: center;">Song request</h1>
+        <div class="header" onclick="$('#comandos').slideToggle('slow');" style="cursor: pointer;">Comandos <i class="fas fa-caret-down"></i></div>
+
+        <div id="comandos" style="display: none">
+            <ul>
+                <li>!rs [link do YT] - adiciona uma música a playlist</li>
+                <li>!skip - mods podem a pular música atual</li>
+            </ul>
+        </div>
+
         <p style="text-align: center;">Clique em "Coletar pedidos" para criar a playlist</p>
         <h4 style="text-align: center;"></h4>
         <div id="player" style="margin: 0 auto; text-align: center; display: none;"></div>
@@ -150,7 +173,7 @@
         }
 
         setInterval(function(){
-            if(player.getDuration() / 60 > 5){
+            if(player.getDuration() / 60 > 4){
                 proxima()
             }
             if(pedidos.length > 1 && pedido + 1 < pedidos.length){
