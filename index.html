@@ -39,6 +39,7 @@
                 <li>!sr [link do YT] - adiciona uma música a playlist</li>
                 <li>!skip - mods podem pular a música atual</li>
                 <li>!song - bot responde no chat o nome da música</li>
+                <li>!next - bot responde no chat o nome da próxima música</li>
             </ul>
         </div>
 
@@ -128,6 +129,12 @@
             if(message.startsWith('!song')){
                 client.say(channel, `Música atual: ${player.getVideoData().title} :notes: Pedido por: ${pedidos[pedido].name}`)
             }
+
+            if(message.startsWith('!next')){
+                $.getJSON('https://www.youtube.com/oembed?url=http://www.youtube.com/watch?v=' + pedidos[pedido + 1].message + '&format=json', function(data){
+                    client.say('Próxima música: ' + data.title + ' :notes: pedido por: ' + pedidos[pedido + 1].name)
+                });
+            }
             
         });
 
@@ -164,7 +171,7 @@
         }
 
         setInterval(function(){
-            if(player.getDuration() / 60 > 5.5){
+            if(player.getDuration() / 60 > 6){
                 proxima()
             }
             if(pedidos.length > 1 && pedido + 1 < pedidos.length){
