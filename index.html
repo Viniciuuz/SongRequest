@@ -12,16 +12,7 @@
     <script src="https://kit.fontawesome.com/7854e7e538.js" crossorigin="anonymous"></script>
 
     <script src="tmi.js"></script>
-
-    <script>
-        const urlParams = new URLSearchParams(window.location.search);
-        const client = new tmi.Client({
-            channels: [ urlParams.get('streamer') ]
-        });
-
-        client.connect(); 
-    </script>
-
+    <script src="app.js"></script>
     <style>
         .header{
             text-align: center;
@@ -43,13 +34,15 @@
         <div class="header" onclick="$('#comandos').slideToggle('slow');" style="cursor: pointer;">Comandos <i class="fas fa-caret-down"></i></div>
 
         <div id="comandos" style="display: none">
+            <p id="changes" style="text-align: center;"><i class="fas fa-info-circle"></i> Músicas com mais de 4 min serão skipadas</p>
             <ul>
                 <li>!rs [link do YT] - adiciona uma música a playlist</li>
                 <li>!skip - mods podem a pular música atual</li>
+                <li>!song ou !musica - bot responde no chat o nome da música</li>
             </ul>
         </div>
 
-        <p style="text-align: center;">Clique em "Coletar pedidos" para criar a playlist</p>
+        <p id="feedback" style="text-align: center;">Clique em "Criar Playlist" para criar a playlist</p>
         <h4 style="text-align: center;"></h4>
         <div id="player" style="margin: 0 auto; text-align: center; display: none;"></div>
         <div id="info" style="display: none;">
@@ -60,7 +53,7 @@
         </div>
         <div id="pedidos" style="text-align: center; max-height: 300px; overflow-y: auto;"></div>
         <div id="buttons" style="text-align: center; width: 100%;">
-            <button class="btn" onclick="start = true; $('#coletar').hide(); $('p').text('esperando pedidos...')" id="coletar">Coletar pedidos</button>
+            <button class="btn" onclick="start = true; $('#coletar').hide(); $('#feedback').text('esperando pedidos...')" id="coletar">Criar Playlist</button>
         </div>
 
         <div id="next" style="text-align: center; display: none;">
@@ -108,16 +101,6 @@
             });
         };
 
-        // function youtube_parser(url){
-        //     if(url.startsWith('https://www.youtube.com/watch?v=')){
-        //         return url.split('=')[1]
-        //     }else if(url.startsWith('https://youtu.be/')){
-        //         return url.split('/')[3]
-        //     }else{
-        //         return false
-        //     }
-        // }
-
         function get_video_id(input) {
             return input.match(/(?:youtu\.be\/|youtube\.com(?:\/embed\/|\/v\/|\/watch\?v=|\/user\/\S+|\/ytscreeningroom\?v=|\/sandalsResorts#\w\/\w\/.*\/))([^\/&]{10,12})/)[1]; 
         }
@@ -141,11 +124,15 @@
                     proxima()
                 }
             }
+
+            if(message.startsWith('!song')){
+                client.say(channel, `Música atual: ${player.getVideoData().title} :notes: Pedido por: ${pedidos[pedido].name}`)
+            }
             
         });
 
         function play_pl(){
-            $('p').text('F5 para criar uma nova playlist')
+            $('#feedback').text('F5 para criar uma nova playlist')
             
             $('#pl').hide()
             $('#info').show()
@@ -177,7 +164,7 @@
         }
 
         setInterval(function(){
-            if(player.getDuration() / 60 > 4){
+            if(player.getDuration() / 60 > 5.5){
                 proxima()
             }
             if(pedidos.length > 1 && pedido + 1 < pedidos.length){
