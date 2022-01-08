@@ -132,7 +132,7 @@
 
             if(message.startsWith('!next')){
                 $.getJSON('https://www.youtube.com/oembed?url=http://www.youtube.com/watch?v=' + pedidos[pedido + 1].message + '&format=json', function(data){
-                    client.say('Próxima música: ' + data.title + ' :notes: pedido por: ' + pedidos[pedido + 1].name)
+                    client.say(channel, 'Próxima música: ' + data.title + ' :notes: pedido por: ' + pedidos[pedido + 1].name)
                 });
             }
             
