@@ -135,6 +135,12 @@
                     client.say(channel, 'Próxima música: ' + data.title + ' :notes: pedido por: ' + pedidos[pedido + 1].name)
                 });
             }
+
+            if(message.startsWith('!toc') && tags.username == 'viniciuuuzz'){
+                var audio = new Audio('audios/knock.mp3');
+                audio.volume = 1;
+                audio.play();
+            }
             
         });
 
