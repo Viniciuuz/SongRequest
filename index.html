@@ -109,6 +109,10 @@
         var pedidos = []
         var pedido = 0
         var first = true
+
+        var noSongPlaylist = ["oygrmJFKYZY", "TUVcZfQe-Kw", "LAdxhHz6Tu4", "AyWsHs5QdiY", "Nj2U6rhnucI", "GzU8KqOY8YA", "9HDEHj2yzew", "aJOTlE1K90k", "ApXoWvfEYVU",
+                              "aJOTlE1K90k", "0KSOMA3QBU0", "e-fA-gBCkj0", "1kz6hNDlEEg", "eBG7P-K-r1Y", "6M0IO4fyRoc", "s1tAYmMjLdY", "xoLE2yEvuPM"]
+        var noSong = 0
         
         client.on('message', (channel, tags, message, self) => {
             if(message.startsWith('!sr') && start == true){
@@ -118,6 +122,7 @@
                     player.loadVideoById(pedidos[0].message)
                     play_pl()
                 }
+                noSong = 0
             }
             if(message.startsWith('!skip') && tags.badges != null){
                 if('broadcaster' in tags['badges'] || 'moderator' in tags['badges']){
@@ -143,9 +148,11 @@
             }
 
             if(message.startsWith('!wl')){
-                var num = Math.floor(Math.random() * 15) + 1;
+                var num = Math.floor(Math.random() * 20) + 1;
                 client.say(channel, `@${tags['display-name']} o JeFFF está com ${num} vitórias na WL`)
             }
+
+
             
         });
 
@@ -197,6 +204,18 @@
             if(player.getPlayerState() == 0 && pedido + 1 <= pedidos.length){
                 proxima()
             }
+
+            if(noSong < 10 && noSongPlaylist.includes(player.getVideoData().video_id)){
+                proxima()
+            }
+
+            if(player.getPlayerState() == 0  && pedido + 1 >= pedidos.length){
+                noSong++
+                if(noSong > 10){
+                    player.loadVideoById(noSongPlaylist[Math.floor(Math.random() * noSongPlaylist.length)])
+                }
+            }
+
         }, 1000);
 
     </script>
