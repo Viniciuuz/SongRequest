@@ -206,11 +206,11 @@
                 proxima()
             }
 
-            if(noSong < 10 && noSongPlaylist.includes(player.getVideoData().video_id)){
+            if(noSong < 10 && noSongPlaylist.includes(player.getVideoData().video_id) && player.getVideoData().video_id != pedidos[pedido]){
                 proxima()
             }
 
-            if(player.getPlayerState() == 0  && pedido + 1 >= pedidos.length){
+            if(player.getPlayerState() == 0 && pedido + 1 >= pedidos.length){
                 noSong++
                 if(noSong > 10){
                     player.loadVideoById(noSongPlaylist[Math.floor(Math.random() * noSongPlaylist.length)])
