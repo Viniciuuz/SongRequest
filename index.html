@@ -115,9 +115,11 @@
                               "oowBXzfcl90", "tRN7ERYZSiQ", "LYa_ReqRlcs", "gNi_6U5Pm_o", "kTHNpusq654", "DUT5rEU6pqM", "bESGLojNYSo", "CvBfHwUxHIk", "JzqYDWBkX_Q",
                               "psuRGfAaju4", "6vwNcNOTVzY", "tAp9BKosZXs", "hTWKbfoikeg", "vabnZ9-ex7o", "n6P0SitRwy8", "3mbBbFH9fAg", "r8OipmKFDeM", "SBjQ9tuuTJQ",
                               "gquZ01Yrhzg", "kn6-c223DUU", "IoBP24I2lwA", "8PTDv_szmL0", "Nq2n7eeY8V4", "ePQe5E69INg", "18oYGsmUprM", "Y2evCkaWaLE", "od6c8G3-r8Y",
-                              "ewRjZoRtu0Y", "UtkGxormq2k", "LOZuxwVk7TU"]
+                              "ewRjZoRtu0Y", "UtkGxormq2k", "LOZuxwVk7TU", "mQmOZX-8EZI", "wSdT-SArM2Q", "kTJczUoc26U", "CdSoooAjXec", "5NQ1YViEgMs", "NtBwVWWa3Ss",
+                              "WWydknOnsXo", "8295rOMvtQI", "GIzDsGyxsQM", "YVkUvmDQ3HY", "qtLXOKC1SHE"]
 
         var noSong = 0
+        var wl = 0
         
         client.on('message', (channel, tags, message, self) => {
             if(message.startsWith('!sr') && start == true){
@@ -129,6 +131,7 @@
                 }
                 noSong = 0
             }
+
             if(message.startsWith('!skip') && tags.badges != null){
                 if('broadcaster' in tags['badges'] || 'moderator' in tags['badges']){
                     console.log('skipado')
@@ -152,9 +155,15 @@
                 audio.play();
             }
 
+            if(message.startsWith('!setwl') && tags.badges != null){
+                if('broadcaster' in tags['badges'] || 'moderator' in tags['badges']){
+                    wl = message.replace('!setwl ', '')
+                    client.say(channel, `@${tags['display-name']} comando !wl foi atualizado`)
+                }
+            }
+
             if(message.startsWith('!wl')){
-                var num = Math.floor(Math.random() * 20) + 1;
-                client.say(channel, `@${tags['display-name']} o JeFFF está com ${num} vitórias na WL`)
+                client.say(channel, `@${tags['display-name']} o ${capitalizeFirstLetter(channel.replace("#", ""))} está com ${wl} vitórias na WL`)            
             }
 
 
