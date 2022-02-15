@@ -118,6 +118,9 @@
                               "ewRjZoRtu0Y", "UtkGxormq2k", "LOZuxwVk7TU", "mQmOZX-8EZI", "wSdT-SArM2Q", "kTJczUoc26U", "CdSoooAjXec", "5NQ1YViEgMs", "NtBwVWWa3Ss",
                               "WWydknOnsXo", "8295rOMvtQI", "GIzDsGyxsQM", "YVkUvmDQ3HY", "qtLXOKC1SHE"]
 
+        shuffle(noSongPlaylist)
+
+        var noSongTimer = 0
         var noSong = 0
         var wl = 0
         
@@ -224,9 +227,14 @@
             }
 
             if(player.getPlayerState() == 0 && pedido + 1 >= pedidos.length){
-                noSong++
-                if(noSong > 10){
-                    player.loadVideoById(noSongPlaylist[Math.floor(Math.random() * noSongPlaylist.length)])
+                noSongTimer++
+                if(noSongTimer > 10){
+                    if(noSong > noSongPlaylist.length - 1){
+                        noSong = 0
+                        shuffle(noSongPlaylist)
+                    }
+                    player.loadVideoById(noSongPlaylist[noSong])
+                    noSong++
                 }
             }
 
