@@ -6,8 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Song Request</title>
 
-    <link href="https://cdn.jsdelivr.net/npm/halfmoon@1.1.1/css/halfmoon-variables.min.css" rel="stylesheet" />
-    <script src="https://cdn.jsdelivr.net/npm/halfmoon@1.1.1/js/halfmoon.min.js"></script>
+    <link href="css/uikit.min.css" rel="stylesheet" />
+    <script src="js/uikit.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://kit.fontawesome.com/7854e7e538.js" crossorigin="anonymous"></script>
 
@@ -25,16 +25,21 @@
             outline: black solid 1px;
             padding: 2px;
         }
+
+        html{
+            background-color: #25282c;
+            color: #efff;
+        }
     </style>
  
 </head>
 <body class="dark-mode">
-    <div class="container">
-        <h1 style="text-align: center;">Song Request</h1>
+    <div class="uk-container">
+        <h1 style="text-align: center; color: #efff;">Song Request</h1>
         <div class="header" onclick="$('#comandos').slideToggle('slow');" style="cursor: pointer;">Comandos <i class="fas fa-caret-down"></i></div>
 
         <div id="comandos" style="display: none">
-            <p id="changes" style="text-align: center;"><i class="fas fa-info-circle"></i> Músicas com mais de 4 min serão skipadas</p>
+            <p id="changes" style="text-align: center;"><i class="fas fa-info-circle"></i> Músicas com mais de 5 min serão skipadas</p>
             <ul>
                 <li>!sr [link do YT] - adiciona uma música a playlist</li>
                 <li>!skip - mods podem pular a música atual</li>
@@ -44,21 +49,20 @@
         </div>
 
         <p id="feedback" style="text-align: center;">Clique em "Criar Playlist" para criar a playlist</p>
-        <h4 style="text-align: center;"></h4>
+        <h4 style="text-align: center; color: #efff;"></h4>
+        <div id="next" style="text-align: center; display: none;">
+            <h5 style="color: #efff;"></h5>
+        </div>
         <div id="player" style="margin: 0 auto; text-align: center; display: none;"></div>
-        <div id="info" style="display: none;">
+        <div id="info" style="display: none; margin-top: 10px;">
             <div id="buttons" style="text-align: center; width: 100%;">
-                <button class="btn" onclick="anterior()">Música Anterior</button>
-                <button class="btn" onclick="proxima()">Pular Música</button>
+                <button class="uk-button uk-button-primary" onclick="anterior()">Música Anterior</button>
+                <button class="uk-button uk-button-primary" onclick="proxima()">Pular Música</button>
             </div>
         </div>
         <div id="pedidos" style="text-align: center; max-height: 300px; overflow-y: auto;"></div>
         <div id="buttons" style="text-align: center; width: 100%;">
-            <button class="btn" onclick="start = true; $('#coletar').hide(); $('#feedback').text('esperando pedidos...')" id="coletar">Criar Playlist</button>
-        </div>
-
-        <div id="next" style="text-align: center; display: none;">
-            <h5></h5>
+            <button class="uk-button uk-button-primary" onclick="start = true; $('#coletar').hide(); $('#feedback').text('esperando pedidos...')" id="coletar">Criar Playlist</button>
         </div>
     </div>
 
@@ -190,7 +194,9 @@
 
         function proxima(){
             if(pedido + 1 > pedidos.length - 1){
-
+                noSong++
+                noSongTimer = 11
+                player.loadVideoById(noSongPlaylist[noSong])
             }else{
                 pedido++
                 player.loadVideoById(pedidos[pedido].message)
@@ -200,7 +206,9 @@
 
         function anterior(){
             if(pedido - 1 < 0){
-
+                noSong--
+                noSongTimer = 11
+                player.loadVideoById(noSongPlaylist[noSong])
             }else{
                 pedido--
                 player.loadVideoById(pedidos[pedido].message)
@@ -209,7 +217,7 @@
         }
 
         setInterval(function(){
-            if(player.getDuration() / 60 > 6){
+            if(player.getDuration() / 60 > 5){
                 proxima()
             }
             if(pedidos.length > 1 && pedido + 1 < pedidos.length){
@@ -225,7 +233,7 @@
                 proxima()
             }
 
-            if(noSong < 10 && noSongPlaylist.includes(player.getVideoData().video_id) && player.getVideoData().video_id != pedidos[pedido].message){
+            if(noSongTimer < 10 && noSongPlaylist.includes(player.getVideoData().video_id) && player.getVideoData().video_id != pedidos[pedido].message){
                 proxima()
             }
 
