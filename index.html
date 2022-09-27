@@ -151,6 +151,14 @@
 
             if(message.startsWith('!song')){
                 client.say(channel, `Música atual: ${player.getVideoData().title} :notes: Pedido por: ${pedidos[pedido].name}`)
+                console.log("song triggered")
+                console.log(channel)
+            }
+
+            if(message.startsWith('!anterior')){
+                $.getJSON('https://www.youtube.com/oembed?url=http://www.youtube.com/watch?v=' + pedidos[pedido - 1].message + '&format=json', function(data){
+                    client.say(channel, 'Próxima música: ' + data.title + ' :notes: pedido por: ' + pedidos[pedido - 1].name)
+                });
             }
 
             if(message.startsWith('!next')){
@@ -217,35 +225,37 @@
         }
 
         setInterval(function(){
-            if(player.getDuration() / 60 > 7){
-                proxima()
-            }
-            if(pedidos.length > 1 && pedido + 1 < pedidos.length){
-                $('#next').show()
-                $.getJSON('https://www.youtube.com/oembed?url=http://www.youtube.com/watch?v=' + pedidos[pedido + 1].message + '&format=json', function(data){
-                    $('h5').html('Próxima música: <i>' + data.title + '</i> pedido por <b style="color: ' + pedidos[pedido + 1].color + '">' + pedidos[pedido + 1].name + '</b>')
-                });
-            }else{
-                $('#next').hide()
-            }
+            if(start){
+                if(player.getDuration() / 60 > 7){
+                    proxima()
+                }
+                if(pedidos.length > 1 && pedido + 1 < pedidos.length){
+                    $('#next').show()
+                    $.getJSON('https://www.youtube.com/oembed?url=http://www.youtube.com/watch?v=' + pedidos[pedido + 1].message + '&format=json', function(data){
+                        $('h5').html('Próxima música: <i>' + data.title + '</i> pedido por <b style="color: ' + pedidos[pedido + 1].color + '">' + pedidos[pedido + 1].name + '</b>')
+                    });
+                }else{
+                    $('#next').hide()
+                }
 
-            if(player.getPlayerState() == 0 && pedido + 1 <= pedidos.length){
-                proxima()
-            }
+                if(player.getPlayerState() == 0 && pedido + 1 <= pedidos.length){
+                    proxima()
+                }
 
-            if(noSongTimer < 10 && noSongPlaylist.includes(player.getVideoData().video_id) && player.getVideoData().video_id != pedidos[pedido].message){
-                proxima()
-            }
+                if(noSongTimer < 10 && noSongPlaylist.includes(player.getVideoData().video_id) && player.getVideoData().video_id != pedidos[pedido].message){
+                    proxima()
+                }
 
-            if(player.getPlayerState() == 0 && pedido + 1 >= pedidos.length){
-                noSongTimer++
-                if(noSongTimer > 10){
-                    if(noSong > noSongPlaylist.length - 1){
-                        noSong = 0
-                        shuffle(noSongPlaylist)
+                if(player.getPlayerState() == 0 && pedido + 1 >= pedidos.length){
+                    noSongTimer++
+                    if(noSongTimer > 10){
+                        if(noSong > noSongPlaylist.length - 1){
+                            noSong = 0
+                            shuffle(noSongPlaylist)
+                        }
+                        player.loadVideoById(noSongPlaylist[noSong])
+                        noSong++
                     }
-                    player.loadVideoById(noSongPlaylist[noSong])
-                    noSong++
                 }
             }
 
