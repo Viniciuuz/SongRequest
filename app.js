@@ -22,8 +22,8 @@ function shuffle(array) {
 const client = new tmi.Client({
     channels: [ urlParams.get('streamer') ],
     identity: {
-      username: 'song_request_bot',
-      password: 'oauth:pcwsiw5nrkjxy92eh6glmvrehh62vc'
+      username: 'bot_sr_',
+      password: 'oauth:4u88ho48h0fwv4d6l84ns7pomnc18g'
     }
 });
 
