@@ -23,7 +23,7 @@ const client = new tmi.Client({
     channels: [ urlParams.get('streamer') ],
     identity: {
       username: 'songrequest_bot_',
-      password: 'oauth:a1mcuf57m5ybvgpi9eba4vvjdml36c'
+      password: 'oauth:c9rkxl05als794aa7e2u8udhs8envc'
     }
 });
 
