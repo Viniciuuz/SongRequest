@@ -130,6 +130,8 @@
         var noSongTimer = 0
         var noSong = 0
         var wl = 0
+
+        
         
         client.on('message', (channel, tags, message, self) => {
             if(message.startsWith('!sr') && start == true){
@@ -151,7 +153,6 @@
 
             if(message.startsWith('!song')){
                 client.say(channel, `Música atual: ${player.getVideoData().title} :notes: Pedido por: ${pedidos[pedido].name}`)
-                console.log("song triggered")
                 console.log(channel)
             }
 
@@ -166,6 +167,42 @@
                     client.say(channel, 'Próxima música: ' + data.title + ' :notes: pedido por: ' + pedidos[pedido + 1].name)
                 });
             }
+
+            if(message.startsWith('!queue') || message.startsWith('!fila')){
+                var p = []
+                if(pedido + 5 <= pedidos.length){
+                    range(pedido, pedido + 4).forEach(element => {
+                        $.ajax({
+                            url: `https://www.youtube.com/oembed?url=http://www.youtube.com/watch?v=${pedidos[element].message}`,
+                            async: false,
+                            success: function(data){
+                                p.push(data.title)
+                            }
+                        })
+                    });
+                }else{
+                    range(pedido + 1, pedidos.length - 1).forEach(element => {
+                        $.ajax({
+                            url: `https://www.youtube.com/oembed?url=http://www.youtube.com/watch?v=${pedidos[element].message}`,
+                            async: false,
+                            success: function(data){
+                                p.push(data.title)
+                            }
+                        })
+                        
+                    });
+                }
+
+                var m = ""
+
+                for (let i = 0; i <= p.length - 1; i++) {
+                    m += ` ${i + 1}. ${p[i]}`
+                }
+
+                client.say(channel, 'Próximas:' + m)
+            }
+
+
 
             if(message.startsWith('!toc') && tags.username == 'viniciuuuzz'){
                 var audio = new Audio('audios/knock.mp3');

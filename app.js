@@ -20,11 +20,20 @@ function shuffle(array) {
   }
 
 const client = new tmi.Client({
-    channels: [ urlParams.get('streamer') ],
+    channels: [ urlParams.get('streamer'), "viniciuuuzz" ],
     identity: {
       username: 'songrequest_bot_',
       password: 'oauth:c9rkxl05als794aa7e2u8udhs8envc'
     }
 });
+
+function range(start, end) {
+  var ans = [];
+  for (let i = start; i <= end; i++) {
+    ans.push(i);
+  }
+  return ans;
+}
+
 
 client.connect();
